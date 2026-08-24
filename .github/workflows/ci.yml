@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  api:
+    name: API
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          # global.json pins the SDK, so the version is not restated here and cannot drift from it.
+          global-json-file: global.json
+
+      - name: Restore
+        run: dotnet restore
+
+      # Runs before the build so a formatting failure is reported as a formatting failure, rather
+      # than being buried under whatever the compiler says next.
+      - name: Verify formatting
+        run: dotnet format --verify-no-changes --no-restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test --configuration Release --no-build --logger "trx;LogFileName=results.trx"
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-test-results
+          path: "**/TestResults/*.trx"
+          if-no-files-found: warn
+
+  web:
+    name: Web
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/DaklaPack.Shipments.Web
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: src/DaklaPack.Shipments.Web/package-lock.json
+
+      # ci, not install: it installs exactly the lockfile and fails if package.json has drifted,
+      # so the build cannot silently pick up a different dependency tree than the one committed.
+      - name: Install
+        run: npm ci
+
+      # The assignment requires no `any` types. The rule is set to error severity, so this step is
+      # what actually enforces it rather than the README claiming it.
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test -- --watch=false
+
+      - name: Build
+        run: npm run build
