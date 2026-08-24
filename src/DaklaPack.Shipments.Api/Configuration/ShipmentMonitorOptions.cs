@@ -22,4 +22,14 @@ public sealed class ShipmentMonitorOptions
     /// <summary>Origins the browser client is served from. Never a wildcard.</summary>
     public string[] AllowedOrigins { get; init; } = [];
 
+    /// <summary>
+    /// How long in-flight requests are given to finish after a shutdown signal.
+    /// </summary>
+    /// <remarks>
+    /// A deployment decision rather than an application one: it depends on the slowest request the
+    /// service serves and on how long the orchestrator waits before killing the container. Exposed
+    /// so the two can be set to agree.
+    /// </remarks>
+    [Range(1, 120)]
+    public int ShutdownDrainSeconds { get; init; } = 15;
 }

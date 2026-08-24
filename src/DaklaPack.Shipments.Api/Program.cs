@@ -9,6 +9,7 @@ using Scalar.AspNetCore;
 var builder = WebApplication.CreateBuilder(args);
 
 const string CorsPolicy = "web-client";
+const string ShipmentsRoute = "/api/v1/shipments";
 
 // Bound once and reused below. The section is optional: the defaults on ShipmentMonitorOptions are
 // safe (Amsterdam, no CORS origins), so an absent section starts correctly rather than failing.
@@ -44,6 +45,10 @@ builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddOpenApi();
 
+// Compression before caching: a JSON list of shipments is highly repetitive text and compresses to
+// roughly a fifth of its size. Enabled for HTTPS too, which is safe here because the endpoint is
+// read-only, unauthenticated, and carries no secret a BREACH-style attack could recover.
+builder.Services.AddResponseCompression(compression => compression.EnableForHttps = true);
 builder.Services.AddHealthChecks();
 
 builder.Services.AddCors(cors => cors.AddPolicy(
@@ -62,9 +67,26 @@ builder.Services.AddScoped<GetShipmentsHandler>();
 // The composition root is the only place that knows which adapter backs the port.
 builder.Services.AddInfrastructure();
 
+// Bounded drain on shutdown. An orchestrator sending SIGTERM during a rolling deploy needs long
+// enough for in-flight requests to finish and short enough that a stuck instance does not hold up
+// the rollout - which is a deployment decision, so it is configuration rather than a literal here.
+builder.Services.Configure<HostOptions>(host =>
+{
+    host.ShutdownTimeout = TimeSpan.FromSeconds(options.ShutdownDrainSeconds);
+});
+
 var app = builder.Build();
 
 app.UseExceptionHandler();
+
+app.UseResponseCompression();
+
+// Scoped to the shipment endpoints, not applied globally: buffering every response to hash it
+// would tax the OpenAPI document and the docs UI for no benefit. The polling UI makes this the
+// dominant traffic pattern here - see ConditionalGetMiddleware.
+app.UseWhen(
+    context => context.Request.Path.StartsWithSegments(ShipmentsRoute, StringComparison.OrdinalIgnoreCase),
+    shipments => shipments.UseMiddleware<ConditionalGetMiddleware>());
 
 if (app.Environment.IsDevelopment())
 {
