@@ -1,0 +1,150 @@
+:host {
+  // A column layout with the main region growing pushes the footer to the bottom on short pages,
+  // instead of leaving it floating halfway up an empty screen.
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.page {
+  flex: 1 0 auto;
+}
+
+// DaklaPack's own site uses a near-black chrome bar with the brand red as the accent, not a
+// red-flooded header. Matching that is why this is dark with a red rule beneath, rather than
+// mat-toolbar's default surface. Material 3 removed the `color` input, so painting it from tokens
+// is the supported route anyway.
+.app-bar {
+  background: var(--dak-black);
+  color: var(--dak-text-on-dark);
+  border-bottom: 3px solid var(--dak-red);
+  box-shadow: 0 1px 3px rgb(30 30 36 / 24%);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  gap: 0.75rem;
+  padding-inline: 1.5rem;
+}
+
+.app-bar__mark {
+  color: var(--dak-red);
+}
+
+.app-bar__title {
+  font-family: Poppins, sans-serif;
+  font-weight: 600;
+  font-size: 1.0625rem;
+  letter-spacing: 0.01em;
+}
+
+.app-bar__title span {
+  font-weight: 300;
+  opacity: 0.75;
+}
+
+.page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.75rem 1.5rem 3rem;
+}
+
+.page__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.page__title {
+  margin: 0;
+  font-family: Poppins, sans-serif;
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: var(--dak-text-header);
+}
+
+.page__subtitle {
+  margin: 0.25rem 0 0;
+  font: var(--mat-sys-body-medium);
+  color: var(--dak-text-body);
+}
+
+// The count sits opposite the title so the eye gets the scale of the list without reading rows.
+.page__count {
+  text-align: right;
+  line-height: 1.1;
+}
+
+.page__count strong {
+  font-family: Poppins, sans-serif;
+  font-weight: 600;
+  font-size: 1.75rem;
+  color: var(--dak-red);
+}
+
+.page__count small {
+  display: block;
+  font: var(--mat-sys-label-medium);
+  color: var(--dak-text-body);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+// The raised surface the data sits on. Without it the table floated on the page background with
+// nothing separating data from chrome, which is what made the first pass read as unstyled.
+.surface {
+  background: var(--dak-bg-light-1);
+  border: 1px solid var(--dak-border);
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgb(30 30 36 / 6%), 0 4px 12px rgb(30 30 36 / 4%);
+  overflow: hidden;
+}
+
+.surface__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1rem 1.25rem;
+  background: var(--dak-bg-light-2);
+  border-bottom: 1px solid var(--dak-border);
+}
+
+.notice {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--dak-border);
+  font: var(--mat-sys-body-medium);
+}
+
+.notice--info {
+  background: var(--dak-info-light);
+  color: var(--dak-info);
+}
+
+.notice--warn {
+  background: var(--dak-warning-light);
+  color: var(--dak-warning);
+}
+
+.notice__spacer {
+  flex: 1 1 auto;
+}
+
+@media (max-width: 600px) {
+  .page {
+    padding: 1rem 0.75rem 2rem;
+  }
+
+  .app-bar {
+    padding-inline: 1rem;
+  }
+
+  .page__count {
+    display: none;
+  }
+}

@@ -1,0 +1,136 @@
+<div class="table-wrapper">
+  <table
+    mat-table
+    [dataSource]="page().items"
+    matSort
+    [matSortActive]="activeSort()"
+    [matSortDirection]="activeDirection()"
+    matSortDisableClear
+    (matSortChange)="sortChange.emit($event)"
+  >
+    <caption class="cdk-visually-hidden">
+      Shipment orders, {{ page().totalCount }} in total.
+    </caption>
+
+    <ng-container matColumnDef="trackingId">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by tracking id">
+        Tracking id
+      </th>
+      <td mat-cell *matCellDef="let shipment" class="tracking">{{ shipment.trackingId }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by status">
+        Status
+      </th>
+      <td mat-cell *matCellDef="let shipment">
+        <app-shipment-status-chip [status]="shipment.status" />
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="destination">
+      <th mat-header-cell *matHeaderCellDef>Destination</th>
+      <td mat-cell *matCellDef="let shipment">
+        <span class="destination__city">
+          {{ shipment.destination.city }}, {{ shipment.destination.countryCode }}
+        </span>
+        <span class="destination__postcode">{{ shipment.destination.postalCode }}</span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="weightKg">
+      <th mat-header-cell *matHeaderCellDef class="numeric">Weight</th>
+      <td mat-cell *matCellDef="let shipment" class="numeric">
+        {{ shipment.weightKg | number: '1.1-3' }} kg
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="carrier">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by carrier">
+        Carrier
+      </th>
+      <td mat-cell *matCellDef="let shipment">{{ shipment.carrier }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="dispatchedAt">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by dispatch time">
+        Dispatched
+      </th>
+      <!-- An instant: shown in the viewer's local zone, which is what "when did it leave" means. -->
+      <td mat-cell *matCellDef="let shipment" class="muted">{{ shipment.dispatchedAt | date: 'd MMM, HH:mm' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="estimatedDeliveryOn">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by estimated delivery date">
+        Due
+      </th>
+      <td mat-cell *matCellDef="let shipment">
+        <!--
+          A calendar date, formatted from its components. DatePipe must not be used here: it turns
+          the string into an instant and offsets it, which renders the wrong day. See
+          CalendarDatePipe.
+        -->
+        @if (shipment.isOverdue) {
+          <span class="overdue">
+            <mat-icon aria-hidden="true">warning</mat-icon>
+            {{ shipment.estimatedDeliveryOn | calendarDate }}
+            <span class="cdk-visually-hidden">(overdue)</span>
+          </span>
+        } @else {
+          {{ shipment.estimatedDeliveryOn | calendarDate }}
+        }
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columns"></tr>
+    <tr mat-row *matRowDef="let row; columns: columns"></tr>
+  </table>
+</div>
+
+<div class="cards">
+  @for (shipment of page().items; track shipment.id) {
+    <article class="card">
+      <div class="card__head">
+        <span class="card__tracking">{{ shipment.trackingId }}</span>
+        <app-shipment-status-chip [status]="shipment.status" />
+      </div>
+      <div class="card__row">
+        <span class="card__label">Destination</span>
+        <span>{{ shipment.destination.city }}, {{ shipment.destination.countryCode }}</span>
+      </div>
+      <div class="card__row">
+        <span class="card__label">Weight</span>
+        <span>{{ shipment.weightKg | number: '1.1-3' }} kg</span>
+      </div>
+      <div class="card__row">
+        <span class="card__label">Carrier</span>
+        <span>{{ shipment.carrier }}</span>
+      </div>
+      <div class="card__row">
+        <span class="card__label">Dispatched</span>
+        <span>{{ shipment.dispatchedAt | date: 'd MMM, HH:mm' }}</span>
+      </div>
+      <div class="card__row">
+        <span class="card__label">Due</span>
+        @if (shipment.isOverdue) {
+          <span class="overdue">
+            <mat-icon aria-hidden="true">warning</mat-icon>
+            {{ shipment.estimatedDeliveryOn | calendarDate }}
+            <span class="cdk-visually-hidden">(overdue)</span>
+          </span>
+        } @else {
+          <span>{{ shipment.estimatedDeliveryOn | calendarDate }}</span>
+        }
+      </div>
+    </article>
+  }
+</div>
+
+<mat-paginator
+  [length]="page().totalCount"
+  [pageSize]="page().pageSize"
+  [pageIndex]="pageIndex(page())"
+  [pageSizeOptions]="[10, 25, 50, 100]"
+  (page)="pageChange.emit($event)"
+  aria-label="Select page of shipments"
+/>

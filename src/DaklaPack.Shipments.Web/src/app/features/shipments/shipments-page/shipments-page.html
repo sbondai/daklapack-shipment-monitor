@@ -1,0 +1,102 @@
+<mat-toolbar class="app-bar">
+  <mat-icon class="app-bar__mark" aria-hidden="true">local_shipping</mat-icon>
+  <span class="app-bar__title">Daklapack <span>Shipment Monitor</span></span>
+</mat-toolbar>
+
+<main class="page">
+  <header class="page__header">
+    <div>
+      <h1 class="page__title">Shipment orders</h1>
+      <p class="page__subtitle">Live view of consignments moving through the network.</p>
+    </div>
+
+    @if (store.loadedPage(); as page) {
+      <div class="page__count">
+        <strong>{{ page.totalCount }}</strong>
+        <small>{{ store.query().status ? 'matching' : 'shipments' }}</small>
+      </div>
+    }
+  </header>
+
+  <section class="surface">
+    <div class="surface__toolbar">
+      <app-shipment-filter-bar
+        [status]="store.query().status"
+        [busy]="store.busy()"
+        (statusChange)="onStatusChange($event)"
+        (refresh)="store.refresh()"
+      />
+    </div>
+
+    <!--
+      A change is announced rather than swapped in. Silently replacing rows underneath someone who
+      is reading them is how an operator loses their place; this makes it their call. The wording
+      says "changed" and not "N new arrived" on purpose - see ShipmentStore.resultsChanged.
+    -->
+    @if (store.resultsChanged()) {
+      <div class="notice notice--info" role="status" aria-live="polite">
+        <mat-icon aria-hidden="true">sync</mat-icon>
+        <span>Shipment results have changed.</span>
+        <span class="notice__spacer"></span>
+        <button matButton type="button" (click)="store.refresh()">Refresh</button>
+      </div>
+    }
+
+    @if (store.view().kind === 'loading') {
+      <app-state-panel [loading]="true" />
+    } @else if (store.view().kind === 'no-results') {
+      <app-state-panel
+        icon="inbox"
+        message="No shipments match this filter."
+        detail="Try clearing the status filter to see the full list."
+      />
+    } @else if (store.error(); as error) {
+      <app-state-panel
+        tone="error"
+        icon="cloud_off"
+        [message]="error.message"
+        [detail]="error.fieldErrors.length ? error.fieldErrors.join(' ') : null"
+        [retryable]="true"
+        (retry)="store.refresh()"
+      />
+    } @else if (store.pagePastEnd(); as page) {
+      <!--
+        The page emptied out while the operator was on it. The envelope is kept so the paginator
+        still renders and there is a way back - telling them "no shipments match" here would be
+        false and would strand them.
+      -->
+      <div class="notice notice--warn" role="status" aria-live="polite">
+        <mat-icon aria-hidden="true">history</mat-icon>
+        <span>
+          This page is now past the end of the results. {{ page.totalCount }}
+          {{ page.totalCount === 1 ? 'shipment' : 'shipments' }} remain on earlier pages.
+        </span>
+        <span class="notice__spacer"></span>
+        <button matButton="filled" type="button" (click)="store.goToLastPage()">
+          Go to last page
+        </button>
+      </div>
+      <app-shipment-table
+        [page]="page"
+        [activeSort]="materialSortColumn()"
+        [activeDirection]="materialDirection()"
+        (sortChange)="onSortChange($event)"
+        (pageChange)="onPageChange($event)"
+      />
+    } @else if (store.loadedPage(); as page) {
+      <app-shipment-table
+        [page]="page"
+        [activeSort]="materialSortColumn()"
+        [activeDirection]="materialDirection()"
+        (sortChange)="onSortChange($event)"
+        (pageChange)="onPageChange($event)"
+      />
+    }
+  </section>
+</main>
+
+<app-footer
+  [live]="store.isLive()"
+  [lastUpdatedAt]="store.lastUpdatedAt()"
+  [intervalSeconds]="pollSeconds"
+/>

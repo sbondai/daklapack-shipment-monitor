@@ -1,0 +1,114 @@
+.table-wrapper {
+  // Wide content scrolls inside its own container so the page body never scrolls sideways.
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  background: transparent;
+}
+
+th.mat-mdc-header-cell {
+  font: var(--mat-sys-title-small);
+  color: var(--mat-sys-on-surface-variant);
+  white-space: nowrap;
+}
+
+td.mat-mdc-cell {
+  font: var(--mat-sys-body-medium);
+  color: var(--mat-sys-on-surface);
+  border-bottom-color: var(--mat-sys-outline-variant);
+}
+
+tr.mat-mdc-row:hover td.mat-mdc-cell {
+  // A scanning cue. On a wide table it is easy to slip a row while reading across.
+  background: var(--mat-sys-surface-container-low);
+}
+
+.tracking {
+  font-family: 'Roboto Mono', ui-monospace, monospace;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.destination__city {
+  display: block;
+}
+
+.destination__postcode {
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.muted {
+  color: var(--mat-sys-on-surface-variant);
+  white-space: nowrap;
+}
+
+.overdue {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--mat-sys-error);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.overdue mat-icon {
+  font-size: 1.05rem;
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.cards {
+  display: none;
+}
+
+// Below this width a seven-column table is unusable, so the same rows render as cards.
+@media (max-width: 900px) {
+  .table-wrapper {
+    display: none;
+  }
+
+  .cards {
+    display: grid;
+    gap: 0.75rem;
+    padding: 1rem;
+  }
+
+  .card {
+    border: 1px solid var(--mat-sys-outline-variant);
+    border-radius: var(--mat-sys-corner-medium, 12px);
+    padding: 1rem;
+    background: var(--mat-sys-surface);
+  }
+
+  .card__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid var(--mat-sys-outline-variant);
+  }
+
+  .card__row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    font: var(--mat-sys-body-medium);
+    padding: 0.2rem 0;
+  }
+
+  .card__label {
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
