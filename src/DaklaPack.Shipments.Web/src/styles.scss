@@ -1,0 +1,77 @@
+@use '@angular/material' as mat;
+@use './styles/theme-colors' as brand;
+
+// DaklaPack brand tokens, taken from daklapack.com's own published custom properties.
+// Kept as a named layer so the Material theme above and the app styles below both draw from one
+// source, and a rebrand is a change to this block rather than a hunt through components.
+:root {
+  --dak-red: #d31f14;
+  --dak-red-hover: #a10f0d;
+  --dak-black: #1e1e24;
+  --dak-black-2: #26262e;
+  --dak-black-3: #3b3e44;
+  --dak-action: #1f76d6;
+  --dak-eco: #539987;
+  --dak-neutral: #cfd8dc;
+  --dak-border: #dadee3;
+  --dak-bg-light-1: #fffffc;
+  --dak-bg-light-2: #f8f8f8;
+  --dak-bg-light-4: #f4f4f6;
+  --dak-text-header: #1e1e24;
+  --dak-text-body: #4a4a4f;
+  --dak-text-on-dark: #fffffc;
+  --dak-success: #1d8122;
+  --dak-success-light: #e4fbe5;
+  --dak-warning: #a25d10;
+  --dak-warning-light: #fbe5c9;
+  --dak-error: #eb0f0a;
+  --dak-error-light: #f6d2d0;
+  --dak-info: #1565c0;
+  --dak-info-light: #f0f4f8;
+}
+
+html {
+  height: 100%;
+
+  // The tonal palettes are generated from the DaklaPack brand colours by
+  // `ng generate @angular/material:theme-color`, so every Material component picks up the brand
+  // rather than being hand-patched at each use site.
+  @include mat.theme((
+    color: (
+      primary: brand.$primary-palette,
+      tertiary: brand.$tertiary-palette,
+    ),
+    typography: (
+      plain-family: (Poppins, 'Helvetica Neue', sans-serif),
+      brand-family: (Poppins, 'Helvetica Neue', sans-serif),
+    ),
+    density: 0,
+  ));
+}
+
+body {
+  color-scheme: light;
+  background-color: var(--dak-bg-light-4);
+  color: var(--dak-text-body);
+  font: var(--mat-sys-body-medium);
+  margin: 0;
+  min-height: 100%;
+}
+
+// Status colours, mapped onto DaklaPack's own semantic set rather than invented.
+// Each is a tinted container with matching text, so contrast holds and the label stays legible;
+// colour is never the only cue that a status carries (see ShipmentStatusChip).
+:root {
+  --status-neutral-bg: var(--dak-bg-light-2);
+  --status-neutral-fg: var(--dak-text-body);
+  --status-progress-bg: var(--dak-info-light);
+  --status-progress-fg: var(--dak-info);
+  --status-active-bg: #d7eaee;
+  --status-active-fg: #17414a;
+  --status-success-bg: var(--dak-success-light);
+  --status-success-fg: var(--dak-success);
+  --status-warning-bg: var(--dak-warning-light);
+  --status-warning-fg: var(--dak-warning);
+  --status-danger-bg: var(--dak-error-light);
+  --status-danger-fg: #8c0603;
+}
