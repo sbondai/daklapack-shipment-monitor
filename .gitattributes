@@ -1,0 +1,12 @@
+# LF everywhere, in the repository and in the working tree.
+#
+# The .editorconfig line-ending rule and this file must agree: when they disagreed,
+# `dotnet format --verify-no-changes` failed on 1605 ENDOFLINE errors across the whole tree, which
+# makes the format gate useless because nobody can ever get it green.
+* text=auto eol=lf
+
+# Binary
+*.png binary
+*.jpg binary
+*.ico binary
+*.pdf binary

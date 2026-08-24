@@ -1,0 +1,39 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+indent_style = space
+trim_trailing_whitespace = true
+
+[*.{yml,yaml,json,ts,html,scss,css}]
+indent_size = 2
+
+[*.cs]
+indent_size = 4
+
+# Namespaces and usings
+csharp_style_namespace_declarations = file_scoped:error
+dotnet_sort_system_directives_first = true
+csharp_using_directive_placement = outside_namespace:error
+
+# Prefer modern language features
+csharp_style_var_when_type_is_apparent = true:suggestion
+csharp_prefer_braces = true:suggestion
+csharp_style_prefer_primary_constructors = true:suggestion
+dotnet_style_prefer_conditional_expression_over_return = true:suggestion
+
+# Expression-bodied members
+csharp_style_expression_bodied_methods = when_on_single_line:suggestion
+csharp_style_expression_bodied_properties = true:suggestion
+
+# Nullable / quality analyzers that should never be silently ignored
+dotnet_diagnostic.CA2007.severity = none      # ConfigureAwait not needed in ASP.NET Core
+dotnet_diagnostic.CS8618.severity = error     # non-nullable field uninitialised
+dotnet_diagnostic.CS8602.severity = error     # dereference of a possibly null reference
+
+# Generated code: Mapperly and the OpenAPI document generator emit code we do not own.
+[*.g.cs]
+generated_code = true
+dotnet_analyzer_diagnostic.severity = none

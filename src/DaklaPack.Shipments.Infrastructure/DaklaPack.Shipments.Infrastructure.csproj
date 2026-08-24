@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\DaklaPack.Shipments.Application\DaklaPack.Shipments.Application.csproj" />
+    <ProjectReference Include="..\DaklaPack.Shipments.Domain\DaklaPack.Shipments.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The adapters are internal; only the composition-root extension is public API. -->
+    <InternalsVisibleTo Include="DaklaPack.Shipments.UnitTests" />
+    <InternalsVisibleTo Include="DaklaPack.Shipments.ContractTests" />
+  </ItemGroup>
+
+</Project>

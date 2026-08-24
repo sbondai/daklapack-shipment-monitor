@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\DaklaPack.Shipments.Domain\DaklaPack.Shipments.Domain.csproj" />
+    <ProjectReference Include="..\..\src\DaklaPack.Shipments.Application\DaklaPack.Shipments.Application.csproj" />
+    <ProjectReference Include="..\..\src\DaklaPack.Shipments.Infrastructure\DaklaPack.Shipments.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\DaklaPack.Shipments.Api\DaklaPack.Shipments.Api.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Shouldly" />
+    <PackageReference Include="TngTech.ArchUnitNET.xUnitV3" />
+    <PackageReference Include="xunit.runner.visualstudio">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.v3" />
+  </ItemGroup>
+
+</Project>

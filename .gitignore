@@ -1,0 +1,32 @@
+## .NET
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+artifacts/
+*.user
+*.suo
+.vs/
+TestResults/
+coverage/
+*.coverage
+*.trx
+
+## Rider / VS Code
+.idea/
+.vscode/
+
+## Node / Angular
+node_modules/
+dist/
+.angular/
+npm-debug.log*
+
+## OS
+Thumbs.db
+.DS_Store
+
+## Local-only working notes — not part of the deliverable.
+## The design rationale that belongs with the submission lives in README.md; these are the
+## working papers behind it and stay on the machine.
+docs/
